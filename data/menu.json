@@ -1,0 +1,43 @@
+[
+  {
+    "name": "Burger",
+    "price": 8.5,
+    "ingredients": {
+      "bun": 1,
+      "patty": 1,
+      "cheese": 1
+    }
+  },
+  {
+    "name": "Fries",
+    "price": 3.5,
+    "ingredients": {
+      "potato": 2,
+      "oil": 1
+    }
+  },
+  {
+    "name": "Pizza",
+    "price": 10.0,
+    "ingredients": {
+      "dough": 1,
+      "tomato": 2,
+      "cheese": 2
+    }
+  },
+  {
+    "name": "Salad",
+    "price": 6.0,
+    "ingredients": {
+      "lettuce": 2,
+      "tomato": 1
+    }
+  },
+  {
+    "name": "Soda",
+    "price": 2.0,
+    "ingredients": {
+      "soda_can": 1
+    }
+  }
+]
