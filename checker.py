@@ -359,6 +359,22 @@ def indent(text,n=4):
     p=" "*n; return "\n".join(p+x for x in str(text).splitlines())
 
 
+def focus_report(report, stage_number):
+    """Return a CLI-focused view containing only one requested stage.
+
+    run_checks() intentionally keeps "up to stage N" semantics because Shift
+    Mode uses it for cumulative readiness checks. The CLI --stage option is
+    different: it is meant for one learner working one issue, so display and
+    exit status should depend only on the requested stage.
+    """
+    selected = next((stage for stage in report["stages"] if stage["stage"] == stage_number), None)
+    focused = dict(report)
+    focused["focused_stage"] = stage_number
+    focused["stages"] = [selected] if selected is not None else []
+    focused["visible_pass"] = bool(selected and selected["status"] == "PASS")
+    return focused
+
+
 def print_report(report):
     print("="*68); print("KITCHEN RUSH CHECKER"); print("="*68)
     for stage in report["stages"]:
@@ -372,6 +388,12 @@ def print_report(report):
                 if item.get("received") is not None: print("  Received:\n"+indent(pretty(item["received"])))
                 if item.get("example") is not None: print("  Contract example:\n"+indent(pretty(item["example"])))
     print("\n"+"-"*68)
+    if report.get("focused_stage") is not None:
+        stage = report["stages"][0] if report["stages"] else None
+        status = stage["status"] if stage else "UNKNOWN"
+        print(f"STAGE {report['focused_stage']} STATUS: {status}")
+        print("Run: python checker.py    # full project status")
+        return
     print("MVP STATUS: READY" if report["mvp_pass"] else "MVP STATUS: NOT READY")
     if report["mvp_pass"]: print("Shift Mode: python simulation/shift.py --shift 1")
     print("VISIBLE CHECKS: ALL PASS" if report["visible_pass"] else "VISIBLE CHECKS: WORK REMAINS")
@@ -379,8 +401,13 @@ def print_report(report):
 
 def main():
     parser=argparse.ArgumentParser(description="Check currently unlocked Kitchen Rush contracts.")
-    parser.add_argument("--json",action="store_true"); parser.add_argument("--stage",type=int,choices=range(1,9)); parser.add_argument("--all",action="store_true",help=argparse.SUPPRESS)
-    args=parser.parse_args(); report=run_checks(args.stage,args.all and os.environ.get("KITCHEN_RUSH_DEV_MODE")=="1")
+    parser.add_argument("--json",action="store_true")
+    parser.add_argument("--stage",type=int,choices=range(1,9),help="Show and score only the requested stage.")
+    parser.add_argument("--all",action="store_true",help=argparse.SUPPRESS)
+    args=parser.parse_args()
+    report=run_checks(args.stage,args.all and os.environ.get("KITCHEN_RUSH_DEV_MODE")=="1")
+    if args.stage is not None:
+        report=focus_report(report,args.stage)
     print(json.dumps(report,indent=2,default=str)) if args.json else print_report(report)
     raise SystemExit(0 if report["visible_pass"] else 1)
 
