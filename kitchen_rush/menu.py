@@ -13,14 +13,17 @@ def normalize_item_name(name):
         "  PIZZA  " -> "pizza"
     """
     # Deliberate bug: this implementation misses one small normalization step.
-    return name.lower()
+    return name.lower().strip()
 
 
 def get_menu_item(menu_data, name):
     """Return the matching menu item dictionary, or None if it does not exist."""
     # TODO: Implement this function.
-    pass
 
+    for item in menu_data:
+        if item["name"].lower() == name.strip().lower():
+            return item
+        else: return None
 
 def calculate_item_price(item, quantity):
     """Return the price for a quantity of one menu item as a float.
@@ -32,5 +35,7 @@ def calculate_item_price(item, quantity):
 
     total = item["price"] * quantity
 
+    print(total)
+    print(type(total))
     # Deliberate bug: the value looks correct when printed, but its type is wrong.
-    return f"{total:.2f}"
+    return total
