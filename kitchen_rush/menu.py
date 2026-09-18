@@ -34,8 +34,5 @@ def calculate_item_price(item, quantity):
         return 0.0
 
     total = item["price"] * quantity
-
-    print(total)
-    print(type(total))
     # Deliberate bug: the value looks correct when printed, but its type is wrong.
     return total

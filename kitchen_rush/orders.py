@@ -9,7 +9,7 @@ def create_order(order_id, table_number):
         "id": order_id,
         "table": table_number,
         # Deliberate bug: think about the operations an order needs to support.
-        "items": {},
+        "items": [],
         "status": "new",
         "priority": 0,
     }
@@ -22,7 +22,15 @@ def add_item(order, menu_item, quantity):
     the order even if it does not look up the menu again later.
     """
     # TODO: Implement this function.
-    pass
+    item_updated = {
+        "name": menu_item["name"],
+        "unit_price": menu_item["price"],
+        "quantity": quantity,
+        "ingredients": menu_item["ingredients"]
+    }
+    order.update({"items": [item_updated]})
+    return True
+    
 
 
 def calculate_order_total(order):
